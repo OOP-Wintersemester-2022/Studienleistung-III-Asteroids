@@ -1,9 +1,6 @@
 package util;
 
-import de.ur.mi.oop.graphics.Circle;
-import de.ur.mi.oop.graphics.Compound;
-import de.ur.mi.oop.graphics.Line;
-import de.ur.mi.oop.graphics.Point;
+import de.ur.mi.oop.graphics.*;
 import entities.Entity;
 import entities.Ship;
 
@@ -28,7 +25,19 @@ public class Util {
                 float minX = 99999999;
                 float minY = 99999999;
 
-                Point center = new Point(c.getXPos() + c.getWidth() / 2, c.getYPos() + c.getHeight() / 2);
+                float x = 0;
+                float y = 0;
+
+                for(int i = 0; i < c.size(); i++) {
+                    Line l = (Line) c.get(i);
+                    x += l.getXPos();
+                    y += l.getYPos();
+                }
+
+                x /= c.size();
+                y /= c.size();
+
+                Point center = new Point(x, y);
 
                 for (int i = c.size() - 1; i >= 0; i--) {
                     float[] coordinates = computeRotationCoordinates((Line) c.get(i), angle, center);
@@ -55,10 +64,24 @@ public class Util {
      * @return a new object of class Point which represents the x and y coordinates of the ship's tip or gun after the rotation by angleDegrees
      */
     public static Point rotateShipGun(Ship ship, float angleDegrees) {
-        Point shipGunPosition = new Point(ship.getPartsCompound().get(0).getXPos(), ship.getPartsCompound().get(0).getYPos());
-        Point center = new Point(ship.getPartsCompound().getXPos() + ship.getPartsCompound().getWidth() / 2, ship.getPartsCompound().getYPos() + ship.getPartsCompound().getHeight() / 2);
-        float x = shipGunPosition.getXPos() - 1;
-        float y =  shipGunPosition.getYPos() - 1;
+        Point shipGunPosition = new Point(((Line)ship.getPartsCompound().get(0)).getStartpointX(), ship.getPartsCompound().get(0).getYPos());
+
+        float a = 0;
+        float b = 0;
+
+        for(int i = 0; i < ship.getPartsCompound().size(); i++) {
+            Line l = (Line) ship.getPartsCompound().get(i);
+            a += l.getStartpointX();
+            b += l.getStartpointY();
+        }
+
+        a /= ship.getPartsCompound().size();
+        b /= ship.getPartsCompound().size();
+
+        Point center = new Point(a, b);
+
+        float x = shipGunPosition.getXPos();
+        float y =  shipGunPosition.getYPos();
 
         float newStartX = rotateX(x, center.getXPos(), y, center.getYPos(), angleDegrees);
         float newStartY = rotateY(x, center.getXPos(), y, center.getYPos(), angleDegrees);
